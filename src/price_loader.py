@@ -52,4 +52,6 @@ def build_all_prices(tickers, income_map):
         except Exception as e:
             print(f"{ticker} price failed: {e}")
 
-    return pd.concat(all_prices, ignore_index=True)
+    final_price = pd.concat(all_prices, ignore_index=True)
+
+    return final_price
