@@ -68,5 +68,6 @@ def build_all_financials(tickers):
             print(f"{ticker} failed: {e}")
 
     final_data = pd.concat(all_data, ignore_index=True)
-
+    final_data = final_data.dropna(how="all")
+    
     return final_data
