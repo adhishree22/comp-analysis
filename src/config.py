@@ -5,7 +5,6 @@ TICKERS = ["V", "MA", "DFS", "AXP", "PYPL"]
 Company = {
     "V": "Visa",
     "MA": "Mastercard",
-    "DFS": "Discover Financial Services",
     "AXP": "American Express",
     "PYPL": "PayPal"
 }
@@ -16,7 +15,6 @@ Scale = 1000000
 Fiscal_Year_End = {
     "V": "09-30",   
     "MA": "12-31",
-    "DFS": "12-31",
     "AXP": "12-31",
     "PYPL": "12-31"
 }
