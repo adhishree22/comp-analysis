@@ -6,7 +6,7 @@ from .config import *
 
 
 def get_financial_statements(ticker):
-   
+
     stock = yf.Ticker(ticker)
 
     try:
@@ -25,7 +25,7 @@ def get_financial_statements(ticker):
 
 
 def build_financial_dataframe(ticker):
-  
+
     income, balance, cashflow = get_financial_statements(ticker)
 
     df = pd.DataFrame(index=income.index)
@@ -33,25 +33,31 @@ def build_financial_dataframe(ticker):
     df["Revenue"] = income.get("Total Revenue")
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
-    df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
-    df["EBITDA"] = income.get("EBITDA")
     df["EBITDA"] = income.get("EBITDA")
     df["Depreciation"] = cashflow.get("Depreciation")
-    df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
     df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
-    df["Capex"] = cashflow.get("Capital Expenditure")
+    df["Capex"] = abs(cashflow.get("Capital Expenditure"))
     df["FCF"] = cashflow.get("Free Cash Flow")
 
     df["TotalAssets"] = balance.get("Total Assets")
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
-
-    df = df.ffill()
-
+    
     df = df.apply(pd.to_numeric, errors="coerce")
+    
+    df = df.ffill()
+    
+    if "EBIT" in df.columns:
+      df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
+      
+    if "Depreciation" in df.columns:
+      df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
+        
+    if "EBITDA" in df.columns:
+      df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
     df = df / Scale
 
