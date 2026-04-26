@@ -35,6 +35,7 @@ def build_financial_dataframe(ticker):
     df["EBIT"] = income.get("Operating Income")
     df["EBITDA"] = income.get("EBITDA")
     df["Depreciation"] = cashflow.get("Depreciation")
+    df["Depreciation"]= pd.to_numeric(df["Depreciation"], errors="coerce")
     df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
