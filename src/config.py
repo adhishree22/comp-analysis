@@ -1,6 +1,6 @@
 
 #Company
-TICKERS = ["V", "MA", "DFS", "AXP", "PYPL"]
+TICKERS = ["V", "MA", "AXP", "PYPL"]
 
 Company = {
     "V": "Visa",
