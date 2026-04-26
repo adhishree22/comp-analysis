@@ -37,7 +37,8 @@ def build_financial_dataframe(ticker):
     df["EBITDA"] = income.get("EBITDA")
     df["EBITDA"] = income.get("EBITDA")
     df["Depreciation"] = cashflow.get("Depreciation")
-    df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"].fillna(0))
+    df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
+    df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
     df["Capex"] = cashflow.get("Capital Expenditure")
@@ -49,6 +50,8 @@ def build_financial_dataframe(ticker):
     df["Cash"] = balance.get("Cash And Cash Equivalents")
 
     df = df.ffill()
+
+    df = df.apply(pd.to_numeric, errors="coerce")
 
     df = df / Scale
 
@@ -72,6 +75,6 @@ def build_all_financials(tickers):
             print(f"{ticker} failed: {e}")
 
     final_data = pd.concat(all_data, ignore_index=True)
-    final_data = final_data.dropna(how="all")
+    final_data = final_data.dropna(subset=["Revenue"],how="all")
 
     return final_data
