@@ -14,8 +14,8 @@ def get_price_data(ticker, income):
     try:
         price_data = yf.download(
             ticker,
-            start=f"{start_year}-01-01",
-            end=f"{end_year}-{fiscal_end}",
+            start=f"{start_year - 1}-12-01",
+            end=f"{end_year + 1}-01-15",
             auto_adjust=True,
             progress=False
         )
@@ -26,11 +26,20 @@ def get_price_data(ticker, income):
     if isinstance(price_data.columns, pd.MultiIndex):
         price_data.columns = price_data.columns.droplevel(1)
     price_data = price_data.reset_index()
-    price_data["Date"] = pd.to_datetime(price_data["Date"])#.dt.tz_localize(None)
+    price_data["Date"] = pd.to_datetime(price_data["Date"])
     price_data["Year"] = price_data["Date"].dt.year
 
-    yearly_prices = (price_data.groupby("Year")["Close"].last().reset_index())
-    yearly_prices["Ticker"] = ticker
+    month, day = fiscal_end.split("-")
+    records = []
+    for year in range(start_year, end_year + 1):
+        cutoff = pd.Timestamp(f"{year}-{month}-{day}")
+        window = price_data[price_data["Date"] <= cutoff]
+        if not window.empty:
+            row = window.iloc[-1]
+            records.append({"Year": year, "Close": row["Close"], "Ticker": ticker})
+
+    #yearly_prices = (price_data.groupby("Year")["Close"].last().reset_index())
+    yearly_price= pd.DataFrame(records)
 
     return yearly_prices
 
