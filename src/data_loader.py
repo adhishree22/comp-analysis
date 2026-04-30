@@ -48,8 +48,8 @@ def build_financial_dataframe(ticker):
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
-    df["CurrentAssets"] = (balance.get("Current Assets") or balance.get("Total Current Assets"))
-    df["CurrentLiabilities"] = (balance.get("Current Liabilities") or balance.get("Total Current Liabilities"))
+    df["CurrentAssets"] = balance.get("Current Assets")
+    df["CurrentLiabilities"] = balance.get("Current Liabilities")
     
     df = df.apply(pd.to_numeric, errors="coerce")
     
@@ -57,6 +57,12 @@ def build_financial_dataframe(ticker):
 
     if "EBIT" in df.columns:
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
+
+    if "CurrentAssets" in df.columns:
+      df["CurrentAssets"] = df["CurrentAssets"].fillna(balance.get("Total Current Assets"))
+
+    if "CurrentLiabilities" in df.columns:
+      df["CurrentLiabilities"] = df["CurrentLiabilities"].fillna(balance.get("Total Current Liabilities"))
 
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
