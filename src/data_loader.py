@@ -46,8 +46,6 @@ def build_financial_dataframe(ticker):
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
-    df["CurrentAssets"] = balance.get("Current Assets")
-    df["CurrentLiabilities"] = balance.get("Current Liabilities")
     
     df["Shares"] = balance.get("Ordinary Shares Number")
 
@@ -58,12 +56,6 @@ def build_financial_dataframe(ticker):
 
     if df["EBITDA"].isna().any():
       df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
-
-    if df["CurrentAssets"].isna().any():
-      df["CurrentAssets"] = df["CurrentAssets"].fillna(balance.get("Total Current Assets"))
-
-    if df["CurrentLiabilities"].isna().any():
-      df["CurrentLiabilities"] = df["CurrentLiabilities"].fillna(balance.get("Total Current Liabilities"))
 
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
