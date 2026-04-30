@@ -35,14 +35,12 @@ def build_financial_dataframe(ticker):
     df["EBIT"] = income.get("Operating Income")
     df["EBITDA"] = income.get("EBITDA")
     df["Interest"] = income.get("Interest Expense")
-    df["Depreciation"] = cashflow.get("Depreciation")
-    df["Depreciation"]= pd.to_numeric(df["Depreciation"], errors="coerce")
-    df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
     df["Tax"] = income.get("Tax Provision")
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
     df["Capex"] = abs(cashflow.get("Capital Expenditure"))
     df["FCF"] = cashflow.get("Free Cash Flow")
+    df["Depreciation"]  = cashflow.get("Depreciation And Amortization")
 
     df["TotalAssets"] = balance.get("Total Assets")
     df["Equity"] = balance.get("Stockholders Equity")
@@ -51,24 +49,27 @@ def build_financial_dataframe(ticker):
     df["CurrentAssets"] = balance.get("Current Assets")
     df["CurrentLiabilities"] = balance.get("Current Liabilities")
     
+    df["Shares"] = balance.get("Ordinary Shares Number")
+
     df = df.apply(pd.to_numeric, errors="coerce")
     
-    df = df.ffill()
-
-    if "EBIT" in df.columns:
+    if df["EBIT"].isna().any():
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
 
-    if "CurrentAssets" in df.columns:
+    if df["EBITDA"].isna().any():
+      df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
+
+    if df["CurrentAssets"].isna().any():
       df["CurrentAssets"] = df["CurrentAssets"].fillna(balance.get("Total Current Assets"))
 
-    if "CurrentLiabilities" in df.columns:
+    if df["CurrentLiabilities"].isna().any():
       df["CurrentLiabilities"] = df["CurrentLiabilities"].fillna(balance.get("Total Current Liabilities"))
 
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
 
-    if "EBITDA" in df.columns:
-      df["EBITDA"] = df["EBITDA"].where(df["EBITDA"].notna(), df["EBIT"] + df["Depreciation"])
+    if df["Capex"].isna().any():
+      df["Capex"] = df["Capex"].fillna(0)
 
     df = df / Scale
 

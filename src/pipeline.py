@@ -23,10 +23,12 @@ def build_dataset():
       stock = yf.Ticker(ticker)
       shares = stock.info.get("sharesOutstanding", None)
       market_cap = stock.info.get("marketCap",None)
-      df["Shares"] = shares
+      df["Shares-s"] = shares
       df["MC"] = market_cap
       df["EV_s"] = stock.info.get("enterpriseValue",None)
-      df["Market_Cap"] = df["Close"] * df["Shares"]
+      df["MarketCap"] = df["Close"] * df["Shares"]
+      df["NetDebt"] = df["TotalDebt"] - df["Cash"]
+      df["EV"] = df["MarketCap"] + df["NetDebt"]
 
       all_data.append(df)
 

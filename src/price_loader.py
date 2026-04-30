@@ -9,11 +9,7 @@ def get_price_data(ticker, income):
 
     start_year = income.index.year.min()
     end_year = income.index.year.max()
-
-    if ticker in Fiscal_Year_End:
-        fiscal_end = Fiscal_Year_End[ticker]
-    else:
-        fiscal_end = Default_Fiscal_Year
+    fiscal_end = Fiscal_Year_End.get(ticker, Default_Fiscal_Year)
 
     try:
         price_data = yf.download(
