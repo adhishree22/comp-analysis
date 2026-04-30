@@ -34,9 +34,12 @@ def build_financial_dataframe(ticker):
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
     df["EBITDA"] = income.get("EBITDA")
+    df["Interest"] = income.get("Interest Expense")
     df["Depreciation"] = cashflow.get("Depreciation")
     df["Depreciation"]= pd.to_numeric(df["Depreciation"], errors="coerce")
     df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
+    df["Tax"] = income.get("Tax Provision")
+    df["EPS"]  = income.get("Diluted EPS")
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
     df["Capex"] = abs(cashflow.get("Capital Expenditure"))
@@ -46,17 +49,19 @@ def build_financial_dataframe(ticker):
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
+    df["CurrentAssets"] = balance.get("Current Assets")
+    df["CurrentLiabilities"] = balance.get("Current Liabilities")
     
     df = df.apply(pd.to_numeric, errors="coerce")
-    
+
     df = df.ffill()
-    
+
     if "EBIT" in df.columns:
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
-      
+
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
-        
+
     if "EBITDA" in df.columns:
       df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
