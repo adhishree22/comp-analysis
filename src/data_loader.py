@@ -10,9 +10,9 @@ def get_financial_statements(ticker):
     stock = yf.Ticker(ticker)
 
     try:
-        income = stock.financials.T.sort_index().drop_duplicates()
-        balance = stock.balance_sheet.T.sort_index().drop_duplicates()
-        cashflow = stock.cashflow.T.sort_index().drop_duplicates()
+        income = stock.financials.T.sort_index()
+        balance = stock.balance_sheet.T.sort_index()
+        cashflow = stock.cashflow.T.sort_index()
     except Exception as e:
         raise ValueError(f"Error fetching data for {ticker}: {e}")
 
