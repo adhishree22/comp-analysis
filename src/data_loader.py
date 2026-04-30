@@ -10,9 +10,9 @@ def get_financial_statements(ticker):
     stock = yf.Ticker(ticker)
 
     try:
-        income = stock.financials.T.sort_index()
-        balance = stock.balance_sheet.T.sort_index()
-        cashflow = stock.cashflow.T.sort_index()
+        income = stock.financials.T.sort_index().drop_duplicates()
+        balance = stock.balance_sheet.T.sort_index().drop_duplicates()
+        cashflow = stock.cashflow.T.sort_index().drop_duplicates()
     except Exception as e:
         raise ValueError(f"Error fetching data for {ticker}: {e}")
 
@@ -39,7 +39,6 @@ def build_financial_dataframe(ticker):
     df["Depreciation"]= pd.to_numeric(df["Depreciation"], errors="coerce")
     df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
     df["Tax"] = income.get("Tax Provision")
-    df["EPS"]  = income.get("Diluted EPS")
 
     df["OCF"] = cashflow.get("Operating Cash Flow")
     df["Capex"] = abs(cashflow.get("Capital Expenditure"))
@@ -49,12 +48,12 @@ def build_financial_dataframe(ticker):
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
-    df["CurrentAssets"] = balance.get("Current Assets")
-    df["CurrentLiabilities"] = balance.get("Current Liabilities")
+    df["CurrentAssets"] = (balance.get("Current Assets") or balance.get("Total Current Assets"))
+    df["CurrentLiabilities"] = (balance.get("Current Liabilities") or balance.get("Total Current Liabilities"))
     
     df = df.apply(pd.to_numeric, errors="coerce")
-
-    df = df.ffill()
+    
+    df = df.fillna(method="ffill", limit=1)
 
     if "EBIT" in df.columns:
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
@@ -63,11 +62,12 @@ def build_financial_dataframe(ticker):
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
 
     if "EBITDA" in df.columns:
-      df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
+      ebitda = df["EBIT"] + df["Depreciation"]
+      df["EBITDA"] = df["EBITDA"].fillna(ebitda)
 
     df = df / Scale
 
-
+    df["EPS"]  = income.get("Diluted EPS")
     df["Ticker"] = ticker
     df["Year"] = df.index.year
 
