@@ -53,7 +53,7 @@ def build_financial_dataframe(ticker):
     
     df = df.apply(pd.to_numeric, errors="coerce")
     
-    df = df.fillna(method="ffill", limit=1)
+    df = df.ffill(limit=1)
 
     if "EBIT" in df.columns:
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
@@ -68,8 +68,7 @@ def build_financial_dataframe(ticker):
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
 
     if "EBITDA" in df.columns:
-      ebitda = df["EBIT"] + df["Depreciation"]
-      df["EBITDA"] = df["EBITDA"].fillna(ebitda)
+      df["EBITDA"] = df["EBITDA"].where(df["EBITDA"].notna(), df["EBIT"] + df["Depreciation"])
 
     df = df / Scale
 
