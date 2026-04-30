@@ -53,7 +53,7 @@ def build_financial_dataframe(ticker):
     
     df = df.apply(pd.to_numeric, errors="coerce")
     
-    df = df.ffill(limit=1)
+    df = df.ffill()
 
     if "EBIT" in df.columns:
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
