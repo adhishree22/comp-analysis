@@ -47,7 +47,7 @@ def build_financial_dataframe(ticker):
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
     
-    df["Shares"] = balance.get("Ordinary Shares Number")
+    
 
     df = df.apply(pd.to_numeric, errors="coerce")
     
@@ -66,6 +66,7 @@ def build_financial_dataframe(ticker):
     df = df / Scale
 
     df["EPS"]  = income.get("Diluted EPS")
+    df["Shares"] = balance.get("Ordinary Shares Number")
     df["Ticker"] = ticker
     df["Year"] = df.index.year
 

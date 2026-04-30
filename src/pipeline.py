@@ -20,12 +20,6 @@ def build_dataset():
 
       df = pd.merge(financial_df, price_df, on=["Ticker", "Year"], how="left")
 
-      stock = yf.Ticker(ticker)
-      shares = stock.info.get("sharesOutstanding", None)
-      market_cap = stock.info.get("marketCap",None)
-      df["Shares-s"] = shares
-      df["MC"] = market_cap
-      df["EV_s"] = stock.info.get("enterpriseValue",None)
       df["MarketCap"] = df["Close"] * df["Shares"]
       df["NetDebt"] = df["TotalDebt"] - df["Cash"]
       df["EV"] = df["MarketCap"] + df["NetDebt"]
