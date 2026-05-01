@@ -37,10 +37,10 @@ def add_ratios(df):
     df["InterestCoverage"] = safe_divide(df["EBIT"], df["Interest"])
     df["NetDebtToEBITDA"] = safe_divide(df["NetDebt"],   df["EBITDA"])
 
-    df["PE"] = safe_divide(df["MarketCap"], df["NetIncome"])
-    df["EV_EBITDA"] = safe_divide(df["EV"], df["EBITDA"])
-    df["EV_Revenue"]     = safe_divide(df["EV"],        df["Revenue"])
-    df["FCF_Yield"] = safe_divide(df["FCF"], df["MarketCap"])
+    df["PE"] = safe_divide(df["MarketCap"], (df["NetIncome"] * Scale))
+    df["EV_EBITDA"] = safe_divide(df["EV"], (df["EBITDA"] * Scale))
+    df["EV_Revenue"]     = safe_divide(df["EV"], (df["Revenue"] * Scale))
+    df["FCF_Yield"] = safe_divide((df["FCF"] * Scale), df["MarketCap"])
 
     df["Earnings_Volatility"] = df.groupby("Ticker")["NetIncome_Growth"].transform(lambda x: x.rolling(3).std())
 
