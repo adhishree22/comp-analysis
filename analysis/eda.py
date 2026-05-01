@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from .config import *
+from src.config import *
 
 sns.set_style("whitegrid")
 
@@ -14,20 +14,20 @@ def get_year(df, year=None):
 
 
 def plot_trend(df, metrics, title):
-  
+
   for metric in metrics:
     plt.figure(figsize=(8, 4))
     for ticker in df["Ticker"].unique():
       subset = df[df["Ticker"] == ticker].sort_values("Year")
       plt.plot(subset["Year"], subset[metric], marker="o", label=Company.get(ticker, ticker))
-        
+
     plt.title(f"{metric} — {title}")
     plt.xlabel("Year")
     plt.ylabel(metric)
     plt.legend()
     plt.tight_layout()
     plt.show()
-      
+
 
 def comparison_table(df, metrics, year=None):
   subset = get_year(df, year)
@@ -35,10 +35,10 @@ def comparison_table(df, metrics, year=None):
 
 
 def growth_analysis(df, year=None):
-  
+
   metrics = ["Revenue", "NetIncome", "EBITDA","FCF"]
   plot_trend(df, metrics, "Growth Trend")
- 
+
   return comparison_table(df, [m + "_Growth" for m in metrics] , year)
 
 def margin_analysis(df, year=None):
@@ -58,12 +58,12 @@ def leverage_analysis(df, year=None):
   plot_trend(df,metrics,"Leverage & Risk")
 
   return comparison_table(df,metrics, year)
-  
+
 def valuation_analysis(df, year=None):
 
   metrics= ["PE", "EV_EBITDA", "EV_Revenue", "FCF_Yield"]
   plot_trend(df, metrics, "Valuation Multiples Over Time")
-  
+
   return comparison_table(df,metrics, year)
 
 def correlation_heatmap(df):
@@ -115,10 +115,10 @@ def flag_outliers(df, threshold=2.5):
   cols = [
         c for c in df.columns
         if pd.api.types.is_numeric_dtype(df[c])
-        and c not in ["Year"] 
+        and c not in ["Year"]
     ]
   df = df.copy()
-    
+
   z = df.groupby("Year")[cols].transform(
       lambda x: (x - x.mean()) / x.std() if x.std() > 1e-6 else x * 0
   )
