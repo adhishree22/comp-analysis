@@ -1,6 +1,8 @@
 
 import pandas as pd
 
+from .config import *
+
 def safe_divide(a, b):
     return a.div(b.replace(0, float("nan")))
 
