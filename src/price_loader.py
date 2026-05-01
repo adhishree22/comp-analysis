@@ -39,7 +39,7 @@ def get_price_data(ticker, income):
             records.append({"Year": year, "Close": row["Close"], "Ticker": ticker})
 
     #yearly_prices = (price_data.groupby("Year")["Close"].last().reset_index())
-    yearly_price= pd.DataFrame(records)
+    yearly_prices = pd.DataFrame(records)
 
     return yearly_prices
 
