@@ -40,7 +40,7 @@ def get_price_data(ticker, income):
 
     #yearly_prices = (price_data.groupby("Year")["Close"].last().reset_index())
     yearly_prices = pd.DataFrame(records)
-
+    yearly_prices = yearly_prices.round(2)
     return yearly_prices
 
 
