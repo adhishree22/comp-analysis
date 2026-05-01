@@ -1,13 +1,12 @@
 
 #Company
-TICKERS = ["V", "MA", "AXP", "PYPL","ADYEN.AS"]
+TICKERS = ["V", "MA", "AXP", "PYPL"]
 
 Company = {
     "V": "Visa",
     "MA": "Mastercard",
     "AXP": "American Express",
-    "PYPL": "PayPal",
-    "ADYEN.AS" : "Adyen"
+    "PYPL": "PayPal"
 }
 
 Scale = 1000000
@@ -17,8 +16,7 @@ Fiscal_Year_End = {
     "V": "09-30",
     "MA": "12-31",
     "AXP": "12-31",
-    "PYPL": "12-31",
-    "ADYEN.AS": "12-31"
+    "PYPL": "12-31"
 }
 
 Default_Fiscal_Year = "12-31"
