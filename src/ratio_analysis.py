@@ -44,7 +44,7 @@ def add_ratios(df):
     df["EV_Revenue"]     = safe_divide(df["EV"], (df["Revenue"] * Scale))
     df["FCF_Yield"] = safe_divide((df["FCF"] * Scale), df["MarketCap"])
 
-    df["Earnings_Volatility"] = df.groupby("Ticker")["NetIncome_Growth"].transform(lambda x: x.rolling(3).std())
+    df["Earnings_Volatility"] = df.groupby("Ticker")["NetIncome_Growth"].transform("std")
 
     df.replace([float("inf"), -float("inf")], float("nan"), inplace=True)
     df = df.round(4)
