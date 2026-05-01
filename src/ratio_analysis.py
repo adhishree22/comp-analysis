@@ -22,10 +22,10 @@ def add_ratios(df):
     df["ROE"] = safe_divide(df["NetIncome"], df["Equity"])
     df["ROA"] = safe_divide(df["NetIncome"], df["TotalAssets"])
 
-    df["Incremental_Operating_Margin"] = safe_divide((df.groupby("Ticker")["EBIT"].diff() / df.groupby("Ticker")["Revenue"].diff()))
-    df["Incremental_EBITDA_Margin"] = safe_divide((df.groupby("Ticker")["EBITDA"].diff() / df.groupby("Ticker")["Revenue"].diff()))
-    df["Incremental_Net_Margin"] = safe_divide((df.groupby("Ticker")["NetIncome"].diff() / df.groupby("Ticker")["Revenue"].diff()))
-    df["Incremental_FCF_Margin"] = safe_divide((df.groupby("Ticker")["FCF"].diff() / df.groupby("Ticker")["Revenue"].diff()))
+    df["Incremental_Operating_Margin"] = safe_divide(df.groupby("Ticker")["EBIT"].diff() , df.groupby("Ticker")["Revenue"].diff())
+    df["Incremental_EBITDA_Margin"] = safe_divide(df.groupby("Ticker")["EBITDA"].diff() , df.groupby("Ticker")["Revenue"].diff())
+    df["Incremental_Net_Margin"] = safe_divide(df.groupby("Ticker")["NetIncome"].diff() , df.groupby("Ticker")["Revenue"].diff())
+    df["Incremental_FCF_Margin"] = safe_divide(df.groupby("Ticker")["FCF"].diff() , df.groupby("Ticker")["Revenue"].diff())
 
 
     df["FCF_Conversion"] = safe_divide(df["FCF"],  df["NetIncome"])
