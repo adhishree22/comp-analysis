@@ -22,7 +22,7 @@ def build_dataset():
 
       df["MarketCap"] = (df["Close"] * df["Shares"]).round(2)
       df["NetDebt"] = df["TotalDebt"] - df["Cash"]
-      df["EV"] = df["MarketCap"] + df["NetDebt"]
+      df["EV"] = (df["MarketCap"] + (df["NetDebt"] * Scale)).round(2)
 
       all_data.append(df)
 
