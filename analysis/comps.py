@@ -39,8 +39,8 @@ def operating_comparison(data, ratios, year=None):
   ops["InterestCoverage"] = rat["InterestCoverage"].map("{:.1f}x".format)
 
   ops.index = ops.index.map(Company)
-	ops = ops.round(2)
- 
+  ops = ops.round(2)
+  
   return ops
 
 
@@ -61,7 +61,7 @@ def valuation_comparison(data, ratios, year=None):
 
   val.index = val.index.map(Company)
   val = val.round(2)
-
+  
   return val
 
 
@@ -77,7 +77,7 @@ def add_summary_rows(df, subject="Visa"):
       "High":   peers[numeric_cols].max().round(1),
       "Low":    peers[numeric_cols].min().round(1),
   }).T.round(2)
-
+  
   data = pd.concat([df, summary])
   
   return data
@@ -104,15 +104,15 @@ def implied_valuation(data, ratios, year=None):
     return (metric * Scale * multiple) / visa_shares
 
   
-    results = {
-        "EV/EBITDA": ev_price(ebitda, peers["EV_EBITDA"].median()),
-        "EV/Revenue": ev_price(revenue, peers["EV_Revenue"].median()),
-        "P/E": eq_price(ni, peers["PE"].median()),
-    }
+  results = {
+      "EV/EBITDA": ev_price(ebitda, peers["EV_EBITDA"].median()),
+      "EV/Revenue": ev_price(revenue, peers["EV_Revenue"].median()),
+      "P/E": eq_price(ni, peers["PE"].median()),
+  }
 
-    df = pd.DataFrame.from_dict(results, orient="index", columns=["Implied Price"])
+  df = pd.DataFrame.from_dict(results, orient="index", columns=["Implied Price"])
 
-    df["Current"] = price
-    df["Upside"] = (df["Implied Price"] / price - 1)
+  df["Current"] = price
+  df["Upside"] = (df["Implied Price"] / price - 1)
 
   return df.round(2)
