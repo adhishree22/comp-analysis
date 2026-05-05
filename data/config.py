@@ -9,6 +9,13 @@ Company = {
     "PYPL": "PayPal"
 }
 
+Company_Type = {
+    "V": "Network",          # Visa
+    "MA": "Network",         # Mastercard
+    "AXP": "Financial",      # American Express
+    "PYPL": "Fintech"        # PayPal
+}
+
 Scale = 1000000
 
 #Fiscal year-end dates for each company

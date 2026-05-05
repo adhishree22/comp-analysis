@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-from src.config import *
+from data.config import *
 
 def latest(data, ratios, year=None):
   y = year or data["Year"].max()
@@ -66,23 +66,23 @@ def valuation_comparison(data, ratios, year=None):
 
 def parse_value(x):
   if isinstance(x, str):
-    
+
     x = x.strip()
-    
+
     if x.endswith("%"):
       return float(x[:-1]) / 100
-        
+
     if x.endswith("x"):
       return float(x[:-1])
-        
+
     if x == "—":
       return np.nan
-        
+
     try:
       return float(x)
     except:
       return np.nan
-  
+
   return x
 
 #Peer summary
@@ -102,7 +102,7 @@ def summary(df, subject="Visa"):
   }).T.round(2)
 
   summary = summary.copy()
-  
+
   for col in df.columns:
     if col in ["Revenue_Growth","NetIncome_Growth","EBITDA_Margin","Net_Margin","FCF_Margin","ROE", "ROA","FCF_Yield"]:
       summary[col] = summary[col].map("{:.1%}".format)
@@ -113,7 +113,7 @@ def summary(df, subject="Visa"):
 
 
   sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=["────────"])
-  
+
   data = pd.concat([df, sep, summary])
 
   return data
@@ -162,8 +162,8 @@ def implied_valuation(data, ratios, year=None):
     ]
 
   df = pd.DataFrame(rows).set_index("Multiple")
-  
-  df["Current Price"] = f"${visa_price:.2f}" 
+
+  df["Current Price"] = f"${visa_price:.2f}"
   df["Upside"] = (df["Implied Price"] / visa_price - 1).map("{:.1%}".format)
   df["Implied Price"] = df["Implied Price"].map("${:.2f}".format)
 

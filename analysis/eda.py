@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from src.config import *
+from data.config import *
 
 sns.set_style("whitegrid")
 
@@ -47,14 +47,14 @@ def margin_analysis(df, year=None):
   return comparison_table(df, metrics, year)
 
 def cashflow_analysis(df, year=None):
-  
+
   metrics = ["FCF_Conversion", "OCF_to_NetIncome", "FCF_to_EBITDA"]
   plot_trend(df,metrics, "Cash Flow Quality")
 
   return comparison_table(df,metrics,year)
 
 def leverage_analysis(df, year=None):
-  
+
   metrics = ["NetDebtToEBITDA", "InterestCoverage", "Debt_to_Equity","Earnings_Volatility"]
   plot_trend(df,metrics,"Leverage & Risk")
 
