@@ -11,7 +11,7 @@ Company = {
 
 Scale = 1000000
 
-# Fiscal year-end dates for each company
+#Fiscal year-end dates for each company
 Fiscal_Year_End = {
     "V": "09-30",
     "MA": "12-31",

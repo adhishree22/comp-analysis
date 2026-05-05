@@ -46,11 +46,9 @@ def build_financial_dataframe(ticker):
     df["Equity"] = balance.get("Stockholders Equity")
     df["TotalDebt"] = balance.get("Total Debt")
     df["Cash"] = balance.get("Cash And Cash Equivalents")
-    
-    
 
     df = df.apply(pd.to_numeric, errors="coerce")
-    
+
     if df["EBIT"].isna().any():
       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
 

@@ -12,7 +12,6 @@ def get_year(df, year=None):
   latest_year = df[df["Year"] == y]
   return latest_year
 
-
 def plot_trend(df, metrics, title):
 
   for metric in metrics:
@@ -33,7 +32,6 @@ def comparison_table(df, metrics, year=None):
   subset = get_year(df, year)
   return (subset[["Ticker"] + metrics].set_index("Ticker").rename(index=Company).sort_index().round(4))
 
-
 def growth_analysis(df, year=None):
 
   metrics = ["Revenue", "NetIncome", "EBITDA","FCF"]
@@ -42,18 +40,21 @@ def growth_analysis(df, year=None):
   return comparison_table(df, [m + "_Growth" for m in metrics] , year)
 
 def margin_analysis(df, year=None):
+
   metrics =  ["Net_Margin", "Operating_Margin", "EBITDA_Margin", "FCF_Margin"]
   plot_trend(df, metrics , "Margin Trends")
 
   return comparison_table(df, metrics, year)
 
 def cashflow_analysis(df, year=None):
+  
   metrics = ["FCF_Conversion", "OCF_to_NetIncome", "FCF_to_EBITDA"]
   plot_trend(df,metrics, "Cash Flow Quality")
 
   return comparison_table(df,metrics,year)
 
 def leverage_analysis(df, year=None):
+  
   metrics = ["NetDebtToEBITDA", "InterestCoverage", "Debt_to_Equity","Earnings_Volatility"]
   plot_trend(df,metrics,"Leverage & Risk")
 
