@@ -57,7 +57,7 @@ def valuation_comparison(data, ratios, year=None):
   val["EV/EBITDA"] = rat["EV_EBITDA"]
   val["EV/Revenue"] = rat["EV_Revenue"]
   val["P/E"] = rat["PE"]
-  val["FCF_Yield"] = rat["FCF_Yield"].map("{:.1%}".format)
+  val["FCF_Yield"] = rat["FCF_Yield"].map("{:.1f}x".format)
 
   val.index = val.index.map(Company)
   val = val.round(2)
@@ -110,8 +110,7 @@ def summary(df, subject="Visa"):
       summary[col] = summary[col].map("{:.2f}x".format)
     elif col in ["InterestCoverage","FCF_Yield"]:
       summary[col] = summary[col].map("{:.1f}x".format)
-    elif col in ["Revenue ($B)", "EBITDA ($B)", "NetIncome ($B)", "FCF ($B)"]:
-      summary[col] = summary[col].map("{:.2f}".format)
+
 
   sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=["────────"])
   
