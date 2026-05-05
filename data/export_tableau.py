@@ -1,6 +1,6 @@
 
 import pandas as pd
-from src.config import *
+from data.config import *
 
 def export_for_tableau(data, ratios):
 
