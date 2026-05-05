@@ -11,12 +11,6 @@ def latest(data, ratios, year=None):
 
   return fin, rat
 
-def pct_to_float(x):
-    return float(x.strip('%')) / 100 if isinstance(x, str) else x
-
-def x_to_float(x):
-    return float(x.strip('x')) if isinstance(x, str) else x
-
 #How the businesses actually perform
 #Answers: who runs the better business?
 def operating_comparison(data, ratios, year=None):
@@ -29,20 +23,20 @@ def operating_comparison(data, ratios, year=None):
   ops["NetIncome"] = fin["NetIncome"] * Scale
   ops["FCF"] = fin["FCF"] * Scale
 
-  ops["Revenue_Growth"] = rat["Revenue_Growth"].map("{:.1%}".format)
-  ops["NetIncome_Growth"] = rat["NetIncome_Growth"].map("{:.1%}".format)
+  ops["Revenue_Growth"] = rat["Revenue_Growth"]
+  ops["NetIncome_Growth"] = rat["NetIncome_Growth"]
 
-  ops["EBITDA_Margin"] = rat["EBITDA_Margin"].map("{:.1%}".format)
-  ops["Net_Margin"] = rat["Net_Margin"].map("{:.1%}".format)
-  ops["FCF_Margin"] = rat["FCF_Margin"].map("{:.1%}".format)
+  ops["EBITDA_Margin"] = rat["EBITDA_Margin"]
+  ops["Net_Margin"] = rat["Net_Margin"]
+  ops["FCF_Margin"] = rat["FCF_Margin"]
 
-  ops["ROE"] = rat["ROE"].map("{:.1%}".format)
-  ops["ROA"] = rat["ROA"].map("{:.1%}".format)
+  ops["ROE"] = rat["ROE"]
+  ops["ROA"] = rat["ROA"]
 
-  ops["FCF_Conversion"] = rat["FCF_Conversion"].map("{:.2f}x".format)
+  ops["FCF_Conversion"] = rat["FCF_Conversion"]
 
-  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"].map("{:.2f}x".format)
-  ops["InterestCoverage"] = rat["InterestCoverage"].map("{:.2f}x".format)
+  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"]
+  ops["InterestCoverage"] = rat["InterestCoverage"]
 
   ops.index = ops.index.map(Company)
   ops = ops.round(2)
@@ -73,14 +67,9 @@ def valuation_comparison(data, ratios, year=None):
 
 #Peer summary
 def summary(df, subject="Visa"):
-  
-  temp = df.copy()
-  for col in temp.columns:
-    temp[col] = temp[col].apply(pct_to_float).apply(x_to_float)
 
-  peers        = temp.drop(index=subject, errors="ignore")
-  #numeric_cols = df.select_dtypes("number").columns
-  columns = temp.select_dtypes("number").columns
+  peers        = df.drop(index=subject, errors="ignore")
+  columns = df.select_dtypes("number").columns
 
   summary = pd.DataFrame({
       "Median": peers[columns].median(),
