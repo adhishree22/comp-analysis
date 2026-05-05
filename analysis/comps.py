@@ -67,6 +67,7 @@ def valuation_comparison(data, ratios, year=None):
 def parse_value(x):
   if isinstance(x, str):
     
+    x = x.strip("($B)")
     x = x.strip()
     
     if x.endswith("%"):
