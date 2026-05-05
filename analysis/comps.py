@@ -11,6 +11,12 @@ def latest(data, ratios, year=None):
 
   return fin, rat
 
+def pct_to_float(x):
+    return float(x.strip('%')) / 100 if isinstance(x, str) else x
+
+def x_to_float(x):
+    return float(x.strip('x')) if isinstance(x, str) else x
+
 #How the businesses actually perform
 #Answers: who runs the better business?
 def operating_comparison(data, ratios, year=None):
@@ -67,10 +73,14 @@ def valuation_comparison(data, ratios, year=None):
 
 #Peer summary
 def summary(df, subject="Visa"):
+  
+  temp = df.copy()
+  for col in temp.columns:
+    temp[col] = temp[col].apply(pct_to_float).apply(x_to_float)
 
-  peers        = df.drop(index=subject, errors="ignore")
+  peers        = temp.drop(index=subject, errors="ignore")
   #numeric_cols = df.select_dtypes("number").columns
-  columns = df.columns
+  columns = temp.select_dtypes("number").columns
 
   summary = pd.DataFrame({
       "Median": peers[columns].median(),
