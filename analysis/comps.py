@@ -18,10 +18,10 @@ def operating_comparison(data, ratios, year=None):
   fin, rat = latest(data, ratios, year)
   ops = pd.DataFrame(index=fin.index)
 
-  ops["Revenue"] = (fin["Revenue"] / 1e3).round(2)
-  ops["EBITDA"] = (fin["EBITDA"] / 1e3).round(2)
-  ops["NetIncome"] = (fin["NetIncome"] / 1e3).round(2)
-  ops["FCF"] = (fin["FCF"] / 1e3).round(2)
+  ops["Revenue ($B)"] = (fin["Revenue"] / 1e3).round(2)
+  ops["EBITDA ($B)"] = (fin["EBITDA"] / 1e3).round(2)
+  ops["NetIncome ($B)"] = (fin["NetIncome"] / 1e3).round(2)
+  ops["FCF ($B)"] = (fin["FCF"] / 1e3).round(2)
 
   ops["Revenue_Growth"] = rat["Revenue_Growth"].map("{:.1%}".format)
   ops["NetIncome_Growth"] = rat["NetIncome_Growth"].map("{:.1%}".format)
@@ -51,8 +51,8 @@ def valuation_comparison(data, ratios, year=None):
   fin, rat = latest(data, ratios, year)
   val = pd.DataFrame(index=fin.index)
 
-  val["MarketCap"] = (fin["MarketCap"] / 1e9).round(2)
-  val["EV"] = (fin["EV"] / 1e9).round(2)
+  val["MarketCap ($B)"] = (fin["MarketCap"] / 1e9).round(2)
+  val["EV ($B)"] = (fin["EV"] / 1e9).round(2)
 
   val["EV/EBITDA"] = rat["EV_EBITDA"]
   val["EV/Revenue"] = rat["EV_Revenue"]
@@ -89,7 +89,7 @@ def parse_value(x):
 def summary(df, subject="Visa"):
 
   temp = df.copy()
-  temp = temp.applymap(parse_value)
+  temp = temp.map(parse_value)
 
   peers = temp.drop(index=subject, errors="ignore")
   columns  = temp.select_dtypes("number").columns
@@ -159,9 +159,9 @@ def implied_valuation(data, ratios, year=None):
     ]
 
   df = pd.DataFrame(rows).set_index("Multiple")
-
-  df["Implied Price"] = df["Implied Price"].map("${:.2f}".format)
+  
   df["Current Price"] = f"${visa_price:.2f}" 
   df["Upside"] = (df["Implied Price"] / visa_price - 1).map("{:.1%}".format)
+  df["Implied Price"] = df["Implied Price"].map("${:.2f}".format)
 
   return df.round(2)
