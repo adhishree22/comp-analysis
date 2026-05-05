@@ -23,20 +23,20 @@ def operating_comparison(data, ratios, year=None):
   ops["NetIncome"] = fin["NetIncome"] * Scale
   ops["FCF"] = fin["FCF"] * Scale
 
-  ops["Rev_Growth"] = rat["Revenue_Growth"].map("{:.1%}".format)
-  ops["NI_Growth"] = rat["NetIncome_Growth"].map("{:.1%}".format)
+  ops["Rev_Growth"] = rat["Revenue_Growth"]
+  ops["NI_Growth"] = rat["NetIncome_Growth"]
 
-  ops["EBITDA Margin"] = rat["EBITDA_Margin"].map("{:.1%}".format)
-  ops["Net Margin"] = rat["Net_Margin"].map("{:.1%}".format)
-  ops["FCF Margin"] = rat["FCF_Margin"].map("{:.1%}".format)
+  ops["EBITDA Margin"] = rat["EBITDA_Margin"]
+  ops["Net Margin"] = rat["Net_Margin"]
+  ops["FCF Margin"] = rat["FCF_Margin"]
 
-  ops["ROE"] = rat["ROE"].map("{:.1%}".format)
-  ops["ROA"] = rat["ROA"].map("{:.1%}".format)
+  ops["ROE"] = rat["ROE"]
+  ops["ROA"] = rat["ROA"]
 
-  ops["FCF_Conversion"] = rat["FCF_Conversion"].map("{:.2f}x".format)
+  ops["FCF_Conversion"] = rat["FCF_Conversion"]
 
-  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"].map("{:.2f}x".format)
-  ops["InterestCoverage"] = rat["InterestCoverage"].map("{:.1f}x".format)
+  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"]
+  ops["InterestCoverage"] = rat["InterestCoverage"]
 
   ops.index = ops.index.map(Company)
   ops = ops.round(2)
@@ -57,7 +57,7 @@ def valuation_comparison(data, ratios, year=None):
   val["EV/EBITDA"] = rat["EV_EBITDA"]
   val["EV/Revenue"] = rat["EV_Revenue"]
   val["P/E"] = rat["PE"]
-  val["FCF Yield"] = rat["FCF_Yield"].map("{:.1%}".format)
+  val["FCF Yield"] = rat["FCF_Yield"]
 
   val.index = val.index.map(Company)
   val = val.round(2)
@@ -78,7 +78,9 @@ def summary(df, subject="Visa"):
       "Low":    peers[numeric_cols].min().round(1),
   }).T.round(2)
 
-  data = pd.concat([df, summary])
+  sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=[""])
+  
+  data = pd.concat([df, sep, summary])
 
   return data
 
