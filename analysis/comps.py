@@ -1,120 +1,164 @@
 
 import pandas as pd
-import numpy as np
+from src.config import Company
 
-from src.config import *
-
-def latest(data, ratios, year=None):
-  y = year or data["Year"].max()
-  fin = data[data["Year"] == y].set_index("Ticker")
-  rat = ratios[ratios["Year"] == y].set_index("Ticker")
-
-  return fin, rat
-
-#How the businesses actually perform
-#Answers: who runs the better business?
+# ═══════════════════════════════════════════════════
+# 1. OPERATING COMPARISON
+# How the businesses actually perform
+# ═══════════════════════════════════════════════════
 def operating_comparison(data, ratios, year=None):
+    """
+    Covers growth, margins, returns, cash flow quality,
+    and leverage. Answers: who runs the better business?
+    """
+    y   = year or data["Year"].max()
+    fin = data[data["Year"] == y].set_index("Ticker")
+    rat = ratios[ratios["Year"] == y].set_index("Ticker")
 
-  fin, rat = latest(data, ratios, year)
-  ops = pd.DataFrame(index=fin.index)
+    ops = pd.DataFrame(index=fin.index)
 
-  ops["Revenue"] = fin["Revenue"] * Scale
-  ops["EBITDA"] = fin["EBITDA"] * Scale
-  ops["NetIncome"] = fin["NetIncome"] * Scale
-  ops["FCF"] = fin["FCF"] * Scale
+    # ── Financials ($B) ───────────────────────────
+    ops["Revenue ($B)"]    = (fin["Revenue"] / 1e3).round(1)
+    ops["EBITDA ($B)"]     = (fin["EBITDA"] / 1e3).round(1)
+    ops["FCF ($B)"]        = (fin["FCF"] / 1e3).round(1)
 
-  ops["Revenue_Growth"] = rat["Revenue_Growth"]
-  ops["NetIncome_Growth"] = rat["NetIncome_Growth"]
+    # ── Growth ────────────────────────────────────
+    ops["Rev Growth"]      = rat["Revenue_Growth"].map("{:.1%}".format)
+    ops["NI Growth"]       = rat["NetIncome_Growth"].map("{:.1%}".format)
 
-  ops["EBITDA_Margin"] = rat["EBITDA_Margin"]
-  ops["Net_Margin"] = rat["Net_Margin"]
-  ops["FCF_Margin"] = rat["FCF_Margin"]
+    # ── Margins ───────────────────────────────────
+    ops["EBITDA Margin"]   = rat["EBITDA_Margin"].map("{:.1%}".format)
+    ops["Net Margin"]      = rat["Net_Margin"].map("{:.1%}".format)
+    ops["FCF Margin"]      = rat["FCF_Margin"].map("{:.1%}".format)
 
-  ops["ROE"] = rat["ROE"]
-  ops["ROA"] = rat["ROA"]
+    # ── Returns ───────────────────────────────────
+    ops["ROA"]             = rat["ROA"].map("{:.1%}".format)
 
-  ops["FCF_Conversion"] = rat["FCF_Conversion"]
+    # ── Cash Flow Quality ─────────────────────────
+    ops["FCF Conv."]       = rat["FCF_Conversion"].map("{:.2f}x".format)
 
-  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"]
-  ops["InterestCoverage"] = rat["InterestCoverage"]
+    # ── Leverage ──────────────────────────────────
+    ops["ND/EBITDA"]       = rat["NetDebtToEBITDA"].map("{:.2f}x".format)
+    ops["Int Coverage"]    = rat["InterestCoverage"].map("{:.1f}x".format)
 
-  ops.index = ops.index.map(Company)
-  ops = ops.round(2)
-
-  return ops
+    ops.index = ops.index.map(Company)
+    return ops
 
 
-#How the market prices each business
-#Answers: how expensive is each company relative to peers?
+# ═══════════════════════════════════════════════════
+# 2. VALUATION COMPARISON
+# How the market prices each business
+# ═══════════════════════════════════════════════════
 def valuation_comparison(data, ratios, year=None):
+    """
+    Pure valuation multiples table — the traditional comps.
+    Answers: how expensive is each company relative to peers?
+    """
+    y   = year or data["Year"].max()
+    fin = data[data["Year"] == y].set_index("Ticker")
+    rat = ratios[ratios["Year"] == y].set_index("Ticker")
 
-  fin, rat = latest(data, ratios, year)
-  val = pd.DataFrame(index=fin.index)
+    val = pd.DataFrame(index=fin.index)
 
-  val["MarketCap"] = fin["MarketCap"]
-  val["EV"] = fin["EV"]
+    # ── Size ──────────────────────────────────────
+    val["Mkt Cap ($B)"]  = (fin["MarketCap"] / 1e9).round(1)
+    val["EV ($B)"]       = (fin["EV"] / 1e9).round(1)
 
-  val["EV/EBITDA"] = rat["EV_EBITDA"]
-  val["EV/Revenue"] = rat["EV_Revenue"]
-  val["P/E"] = rat["PE"]
-  val["FCF_Yield"] = rat["FCF_Yield"]
+    # ── Multiples ─────────────────────────────────
+    val["EV/EBITDA"]     = rat["EV_EBITDA"].round(1)
+    val["EV/Revenue"]    = rat["EV_Revenue"].round(1)
+    val["P/E"]           = rat["PE"].round(1)
+    val["FCF Yield"]     = rat["FCF_Yield"].map("{:.1%}".format)
 
-  val.index = val.index.map(Company)
-  val = val.round(2)
-
-  return val
-
-
-#Peer summary
-def summary(df, subject="Visa"):
-
-  peers        = df.drop(index=subject, errors="ignore")
-  columns = df.select_dtypes("number").columns
-
-  summary = pd.DataFrame({
-      "Median": peers[columns].median(),
-      "Mean":   peers[columns].mean(),
-      "High":   peers[columns].max(),
-      "Low":    peers[columns].min(),
-  }).T.round(2)
-
-  sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=[""])
-  
-  data = pd.concat([df, sep, summary])
-
-  return data
+    val.index = val.index.map(Company)
+    return val
 
 
-#Implied Valuation
-#What Visa should be worth using peer multiples
+# ═══════════════════════════════════════════════════
+# HELPER — Add peer summary rows to any table
+# ═══════════════════════════════════════════════════
+def add_summary_rows(df, subject="Visa"):
+
+    peers        = df.drop(index=subject, errors="ignore")
+    numeric_cols = df.select_dtypes(include="number").columns
+
+    summary = pd.DataFrame({
+        "Median": peers[numeric_cols].median().round(1),
+        "Mean":   peers[numeric_cols].mean().round(1),
+        "High":   peers[numeric_cols].max().round(1),
+        "Low":    peers[numeric_cols].min().round(1),
+    }).T
+
+    separator = pd.DataFrame(
+        [["——"] * len(df.columns)],
+        columns=df.columns,
+        index=["────────"]
+    )
+
+    return pd.concat([df, separator, summary])
+
+
+# ═══════════════════════════════════════════════════
+# 3. IMPLIED VALUATION
+# What Visa should be worth using peer multiples
+# ═══════════════════════════════════════════════════
 def implied_valuation(data, ratios, year=None):
 
-  fin, rat = latest(data, ratios, year)
-  peers = rat.drop(index="V")
+    y     = year or data["Year"].max()
+    fin   = data[data["Year"] == y].set_index("Ticker")
+    rat   = ratios[ratios["Year"] == y].set_index("Ticker")
+    peers = rat.drop(index="V")
 
-  visa_ebitda  = fin.loc["V", "EBITDA"]
-  visa_revenue = fin.loc["V", "Revenue"]
-  visa_ni = fin.loc["V", "NetIncome"]
-  visa_netdebt = fin.loc["V", "NetDebt"]
-  visa_shares = fin.loc["V", "Shares"]
-  visa_price = fin.loc["V", "Close"]
+    visa_ebitda  = fin.loc["V", "EBITDA"]
+    visa_revenue = fin.loc["V", "Revenue"]
+    visa_ni      = fin.loc["V", "NetIncome"]
+    visa_netdebt = fin.loc["V", "NetDebt"]
+    visa_shares  = fin.loc["V", "Shares"]
+    visa_price   = fin.loc["V", "Close"]
 
-  def ev_to_price(metric, multiple):
-    return ((metric * Scale * multiple) - (visa_netdebt * Scale)) / visa_shares
+    def ev_to_price(metric, multiple):
+        return ((metric * 1e6 * multiple) - (visa_netdebt * 1e6)) / visa_shares
 
-  def eq_to_price(metric, multiple):
-    return (metric * Scale * multiple) / visa_shares
+    def eq_to_price(metric, multiple):
+        return (metric * 1e6 * multiple) / visa_shares
 
+    rows = [
+        {
+            "Multiple":      "EV/EBITDA",
+            "Peer Median":   f"{peers['EV_EBITDA'].median():.1f}x",
+            "Peer Mean":     f"{peers['EV_EBITDA'].mean():.1f}x",
+            "Implied Price": ev_to_price(visa_ebitda,  peers["EV_EBITDA"].median()),
+        },
+        {
+            "Multiple":      "EV/Revenue",
+            "Peer Median":   f"{peers['EV_Revenue'].median():.1f}x",
+            "Peer Mean":     f"{peers['EV_Revenue'].mean():.1f}x",
+            "Implied Price": ev_to_price(visa_revenue, peers["EV_Revenue"].median()),
+        },
+        {
+            "Multiple":      "P/E",
+            "Peer Median":   f"{peers['PE'].median():.1f}x",
+            "Peer Mean":     f"{peers['PE'].mean():.1f}x",
+            "Implied Price": eq_to_price(visa_ni,      peers["PE"].median()),
+        },
+    ]
 
-  results = {
-      "EV/EBITDA": ev_to_price(visa_ebitda, peers["EV_EBITDA"].median()),
-      "EV/Revenue": ev_to_price(visa_revenue, peers["EV_Revenue"].median()),
-      "P/E": eq_to_price(visa_ni, peers["PE"].median()),
-  }
+    df = pd.DataFrame(rows).set_index("Multiple")
 
-  df = pd.DataFrame.from_dict(results, orient="index", columns=["Implied Price"])
+    prices = df["Implied Price"].values
+    df["Implied Price"] = df["Implied Price"].map("${:.2f}".format)
+    df["vs Current"]    = [
+        f"{((p / visa_price) - 1):+.1%}" for p in prices
+    ]
+    df["Current Price"] = f"${visa_price:.2f}"
 
-  df["Current"] = visa_price
-  df["Upside"] = (df["Implied Price"] / visa_price - 1)
+    # ── Price range summary row ───────────────────
+    range_row = pd.DataFrame([{
+        "Peer Median":   "——",
+        "Peer Mean":     "——",
+        "Implied Price": f"${min(prices):.2f} – ${max(prices):.2f}",
+        "vs Current":    f"Current: ${visa_price:.2f}",
+        "Current Price": "——",
+    }], index=["── Range ──"])
 
-  return df.round(2)
+    return pd.concat([df, range_row])
