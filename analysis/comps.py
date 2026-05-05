@@ -82,8 +82,8 @@ def parse_value(x):
       return float(x)
     except:
       return np.nan
-    
-    return x
+  
+  return x
 
 #Peer summary
 def summary(df, subject="Visa"):
@@ -110,6 +110,8 @@ def summary(df, subject="Visa"):
       summary[col] = summary[col].map("{:.2f}x".format)
     elif col in ["InterestCoverage","FCF_Yield"]:
       summary[col] = summary[col].map("{:.1f}x".format)
+    elif col in ["Revenue ($B)", "EBITDA ($B)", "NetIncome ($B)", "FCF ($B)"]:
+      summary[col] = summary[col].map("{:.2f}".format)
 
   sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=["────────"])
   
