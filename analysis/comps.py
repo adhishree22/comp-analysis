@@ -23,12 +23,12 @@ def operating_comparison(data, ratios, year=None):
   ops["NetIncome"] = fin["NetIncome"] * Scale
   ops["FCF"] = fin["FCF"] * Scale
 
-  ops["Rev_Growth"] = rat["Revenue_Growth"]
-  ops["NI_Growth"] = rat["NetIncome_Growth"]
+  ops["Revenue_Growth"] = rat["Revenue_Growth"]
+  ops["NetIncome_Growth"] = rat["NetIncome_Growth"]
 
-  ops["EBITDA Margin"] = rat["EBITDA_Margin"]
-  ops["Net Margin"] = rat["Net_Margin"]
-  ops["FCF Margin"] = rat["FCF_Margin"]
+  ops["EBITDA_Margin"] = rat["EBITDA_Margin"]
+  ops["Net_Margin"] = rat["Net_Margin"]
+  ops["FCF_Margin"] = rat["FCF_Margin"]
 
   ops["ROE"] = rat["ROE"]
   ops["ROA"] = rat["ROA"]
@@ -57,7 +57,7 @@ def valuation_comparison(data, ratios, year=None):
   val["EV/EBITDA"] = rat["EV_EBITDA"]
   val["EV/Revenue"] = rat["EV_Revenue"]
   val["P/E"] = rat["PE"]
-  val["FCF Yield"] = rat["FCF_Yield"]
+  val["FCF_Yield"] = rat["FCF_Yield"]
 
   val.index = val.index.map(Company)
   val = val.round(2)
@@ -69,13 +69,14 @@ def valuation_comparison(data, ratios, year=None):
 def summary(df, subject="Visa"):
 
   peers        = df.drop(index=subject, errors="ignore")
-  numeric_cols = df.select_dtypes("number").columns
+  #numeric_cols = df.select_dtypes("number").columns
+  columns = df.columns
 
   summary = pd.DataFrame({
-      "Median": peers[numeric_cols].median().round(1),
-      "Mean":   peers[numeric_cols].mean().round(1),
-      "High":   peers[numeric_cols].max().round(1),
-      "Low":    peers[numeric_cols].min().round(1),
+      "Median": peers[columns].median(),
+      "Mean":   peers[columns].mean(),
+      "High":   peers[columns].max(),
+      "Low":    peers[columns].min(),
   }).T.round(2)
 
   sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=[""])
