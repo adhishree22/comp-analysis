@@ -69,7 +69,7 @@ def valuation_comparison(data, ratios, year=None):
 def summary(df, subject="Visa"):
 
   peers        = df.drop(index=subject, errors="ignore")
-  numeric_cols = df.select_dtypes("number")
+  numeric_cols = df.select_dtypes("number").columns
 
   summary = pd.DataFrame({
       "Median": peers[numeric_cols].median().round(1),
