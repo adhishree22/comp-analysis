@@ -4,7 +4,7 @@ import numpy as np
 from src.config import *
 
 
-def latest(ratios, year=None):
+def latest_df(ratios, year=None):
   
   y = year or ratios["Year"].max()
   latest = ratios[ratios["Year"] == y].set_index("Ticker")
@@ -20,7 +20,7 @@ def normalize(series):
 def quality_score(ratios, year=None):
 
     #Higher = better business fundamentals.
-    latest = latest(ratios, year)
+    latest = latest_df(ratios, year)
     scores = pd.DataFrame(index=latest.index)
 
     #Profitability — higher is better
@@ -66,7 +66,7 @@ def quality_score(ratios, year=None):
 def risk_score(ratios, year=None):
 
     #Higher = more risky.    
-    latest = latest(ratios, year)
+    latest = latest_df(ratios, year)
     scores = pd.DataFrame(index=latest.index)
 
     #Leverage risk — higher debt = more risk
@@ -107,7 +107,7 @@ def risk_score(ratios, year=None):
 def growth_score(ratios, year=None):
 
     #Higher = faster and more consistent growth.
-    latest = latest(ratios, year)
+    latest = latest_df(ratios, year)
     scores = pd.DataFrame(index=latest.index)
 
     # Revenue growth — top line expansion
