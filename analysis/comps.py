@@ -18,10 +18,10 @@ def operating_comparison(data, ratios, year=None):
   fin, rat = latest(data, ratios, year)
   ops = pd.DataFrame(index=fin.index)
 
-  ops["Revenue"] = (fin["Revenue"] * Scale).round(2)
-  ops["EBITDA"] = (fin["EBITDA"] * Scale).round(2)
-  ops["NetIncome"] = (fin["NetIncome"] * Scale).round(2)
-  ops["FCF"] = (fin["FCF"] * Scale).round(2)
+  ops["Revenue ($B)"] = (fin["Revenue"] / 1e3).round(2)
+  ops["EBITDA ($B)"] = (fin["EBITDA"] / 1e3).round(2)
+  ops["NetIncome ($B)"] = (fin["NetIncome"] / 1e3).round(2)
+  ops["FCF ($B)"] = (fin["FCF"] / 1e3).round(2)
 
   ops["Revenue_Growth"] = rat["Revenue_Growth"].map("{:.1%}".format)
   ops["NetIncome_Growth"] = rat["NetIncome_Growth"].map("{:.1%}".format)
@@ -51,8 +51,8 @@ def valuation_comparison(data, ratios, year=None):
   fin, rat = latest(data, ratios, year)
   val = pd.DataFrame(index=fin.index)
 
-  val["MarketCap"] = fin["MarketCap"]
-  val["EV"] = fin["EV"]
+  val["MarketCap ($B)"] = (fin["MarketCap"] / 1e9).round(2)
+  val["EV ($B)"] = (fin["EV"] / 1e9).round(2)
 
   val["EV/EBITDA"] = rat["EV_EBITDA"]
   val["EV/Revenue"] = rat["EV_Revenue"]
@@ -67,7 +67,7 @@ def valuation_comparison(data, ratios, year=None):
 def parse_value(x):
   if isinstance(x, str):
     
-    x = x.strip()
+    x = x.replace("($B)", "").strip()
     
     if x.endswith("%"):
       return float(x[:-1]) / 100
@@ -104,10 +104,12 @@ def summary(df, subject="Visa"):
   summary = summary.copy()
   
   for col in df.columns:
-    if "Margin" in col or "Growth" in col or col in ["ROE", "ROA"]:
-        summary[col] = summary[col].map("{:.1%}".format)
-    elif "Coverage" in col or "EBITDA" in col or "FCF" in col:
-        summary[col] = summary[col].map("{:.2f}x".format)
+    if col in ["Revenue_Growth","NetIncome_Growth","EBITDA_Margin","Net_Margin","FCF_Margin","ROE", "ROA"]:
+      summary[col] = summary[col].map("{:.1%}".format)
+    elif col in ["NetDebtToEBITDA","FCF_Conversion"]:
+      summary[col] = summary[col].map("{:.2f}x".format)
+    elif col in ["InterestCoverage","FCF_Yield"]:
+      summary[col] = summary[col].map("{:.1f}x".format)
 
   sep = pd.DataFrame([["—"] * len(df.columns)], columns=df.columns, index=["────────"])
   
