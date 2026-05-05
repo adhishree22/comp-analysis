@@ -17,8 +17,8 @@ def export_for_tableau(data, ratios):
     fin = fin.sort_values(["Ticker", "Year"]).reset_index(drop=True)
     rat = rat.sort_values(["Ticker", "Year"]).reset_index(drop=True)
 
-    fin.to_csv("dashboard/financials.csv", index=False)
-    rat.to_csv("dashboard/ratios.csv", index=False)
+    fin.to_csv("/content/comp-analysis/dashboard/financials.csv", index=False)
+    rat.to_csv("/content/comp-analysis/dashboard/ratios.csv", index=False)
 
     print(f"financials.csv - {fin.shape}")
     print(f"ratios.csv - {rat.shape}")
