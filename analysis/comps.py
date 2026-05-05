@@ -23,20 +23,20 @@ def operating_comparison(data, ratios, year=None):
   ops["NetIncome"] = fin["NetIncome"] * Scale
   ops["FCF"] = fin["FCF"] * Scale
 
-  ops["Revenue_Growth"] = rat["Revenue_Growth"]
-  ops["NetIncome_Growth"] = rat["NetIncome_Growth"]
+  ops["Revenue_Growth"] = rat["Revenue_Growth"].map("{:.1%}".format)
+  ops["NetIncome_Growth"] = rat["NetIncome_Growth"].map("{:.1%}".format)
 
-  ops["EBITDA_Margin"] = rat["EBITDA_Margin"]
-  ops["Net_Margin"] = rat["Net_Margin"]
-  ops["FCF_Margin"] = rat["FCF_Margin"]
+  ops["EBITDA_Margin"] = rat["EBITDA_Margin"].map("{:.1%}".format)
+  ops["Net_Margin"] = rat["Net_Margin"].map("{:.1%}".format)
+  ops["FCF_Margin"] = rat["FCF_Margin"].map("{:.1%}".format)
 
-  ops["ROE"] = rat["ROE"]
-  ops["ROA"] = rat["ROA"]
+  ops["ROE"] = rat["ROE"].map("{:.1%}".format)
+  ops["ROA"] = rat["ROA"].map("{:.1%}".format)
 
-  ops["FCF_Conversion"] = rat["FCF_Conversion"]
+  ops["FCF_Conversion"] = rat["FCF_Conversion"].map("{:.2f}x".format)
 
-  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"]
-  ops["InterestCoverage"] = rat["InterestCoverage"]
+  ops["NetDebtToEBITDA"] = rat["NetDebtToEBITDA"].map("{:.2f}x".format)
+  ops["InterestCoverage"] = rat["InterestCoverage"].map("{:.2f}x".format)
 
   ops.index = ops.index.map(Company)
   ops = ops.round(2)
