@@ -5,7 +5,8 @@ from src.config import *
 
 
 def latest(ratios, year=None):
-  y = year or data["Year"].max()
+  
+  y = year or ratios["Year"].max()
   latest = ratios[ratios["Year"] == y].set_index("Ticker")
 
   return latest
