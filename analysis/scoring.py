@@ -151,7 +151,7 @@ def composite_score(ratios, year=None):
     risk = risk_score(ratios, year)
     growth = growth_score(ratios, year)
 
-    composite_score = pd.DataFrame(index=q.index)
+    composite_score = pd.DataFrame(index=quality.index)
     composite_score["Quality_Score"] = quality["Quality_Score"]
     composite_score["Growth_Score"]  = growth["Growth_Score"]
     composite_score["Risk_Score"]    = risk["Risk_Score"]
