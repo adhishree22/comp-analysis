@@ -7,8 +7,6 @@ def export_for_tableau(data, ratios):
     fin = data.copy()
     rat = ratios.copy()
 
-    for cols in fin.columns
-
     fin["Company"]        = fin["Ticker"].map(Company)
     rat["Company"]        = rat["Ticker"].map(Company)
     fin["Business_Model"] = fin["Ticker"].map(Company_Type)
