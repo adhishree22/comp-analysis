@@ -11,9 +11,9 @@ def export_for_tableau(data, ratios):
     rat["Company"]        = rat["Ticker"].map(Company)
     fin["Business_Model"] = fin["Ticker"].map(Company_Type)
     rat["Business_Model"] = rat["Ticker"].map(Company_Type)
-    
-    Skip = ["Ticker", "Year", "Company", "Business_Model", "EPS", "Shares"]
-    
+
+    Skip = ["Ticker", "Year", "Company", "Business_Model", "EPS", "Shares","EV","MarketCap"]
+
     numeric_cols = [
         c for c in fin.columns
         if c not in Skip
