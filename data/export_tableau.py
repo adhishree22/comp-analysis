@@ -12,7 +12,7 @@ def export_for_tableau(data, ratios):
     fin["Business_Model"] = fin["Ticker"].map(Company_Type)
     rat["Business_Model"] = rat["Ticker"].map(Company_Type)
 
-    Skip = ["Ticker", "Year", "Company", "Business_Model", "EPS", "Shares","EV","MarketCap"]
+    Skip = ["Ticker", "Year", "Company", "Business_Model", "EPS", "Shares","EV","MarketCap","Close"]
 
     numeric_cols = [
         c for c in fin.columns
