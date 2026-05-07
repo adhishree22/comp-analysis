@@ -7,13 +7,14 @@ def safe_divide(a, b):
     return a.div(b.replace(0, float("nan")))
 
 def add_ratios(df):
-    
+
     df = df.sort_values(["Ticker", "Year"]).reset_index(drop=True)
 
     ratios = pd.DataFrame()
+    ratios = df.copy()
     ratios["Ticker"] = df["Ticker"]
     ratios["Year"]   = df["Year"]
-    
+
     for col in ["Revenue", "NetIncome", "EBITDA", "EBIT","FCF"]:
       ratios[f"{col}_Growth"] = df.groupby("Ticker")[col].pct_change()
 
