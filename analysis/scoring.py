@@ -68,7 +68,7 @@ def quality_score(ratios, year=None):
         0.25 * scores["Balance_Sheet"]
     ) * 100
 
-    scores["Quality_Score"] = normalize(scores["Quality_Score"]).round(2)
+    scores["Quality_Score"] = (scores["Quality_Score"]).round(2)
     scores.index = scores.index.map(Company)
 
     return scores
