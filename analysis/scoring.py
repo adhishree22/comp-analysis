@@ -40,16 +40,21 @@ def quality_score(ratios, year=None):
     )
 
     #Balance Sheet — lower leverage = better
-    if latest["Type"] == "Financial":
-      scores["Balance_Sheet"] = (
-        0.6 * (latest["ROE"]) +
-        0.4 * (1/latest["Debt_to_Equity"])
-      )
-    else:
-      scores["Balance_Sheet"] = (
-        0.5 * (1/latest["NetDebtToEBITDA"]) +
-        0.5 * (latest["InterestCoverage"])
-      )
+    financial_mask = latest["Type"] == "Financial"
+    scores["Balance_Sheet"] = np.where(
+    financial_mask,
+
+    # Financial companies
+    (
+        0.6 * latest["ROE"] +
+        0.4 * (1 / latest["Debt_to_Equity"].replace(0, np.nan))
+    ),
+
+    # Non-financial companies
+    (
+        0.5 * (1 / latest["NetDebtToEBITDA"].replace(0, np.nan)) +
+        0.5 * latest["InterestCoverage"]
+    ))
 
     """
     Profitability (45%) - business model strength
@@ -137,7 +142,7 @@ def growth_score(ratios, year=None):
         0.15 * scores["Consistency"]
     ) * 100
 
-    scores["Growth_Score"] = normalize(scores["Growth_Score"])
+    scores["Growth_Score"] = normalize(scores["Growth_Score"]).round(2)
     scores.index = scores.index.map(Company)
 
     return scores
