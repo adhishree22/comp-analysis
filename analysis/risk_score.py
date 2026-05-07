@@ -21,7 +21,7 @@ def build_risk_scorecard(data_df, ratios_df, year=None):
     # 2. EARNINGS VOLATILITY (0-100)
     # < 0.02 = very stable, > 0.3 = very volatile
     earnings_growth_vol = ratios_df.groupby("Ticker")["NetIncome_Growth"].std().reindex(risk.index)
-    risk["volatility"] = (earnings_growth_vol / 0.3 * 100).clip(0, 100)
+    risk["volatility"] = (earnings_growth_vol / 0.4 * 100).clip(0, 100)
     
     # 3. MARKET RISK (0-100)
     # Beta: < 1.0 = defensive, > 1.5 = aggressive
