@@ -1,21 +1,24 @@
 
 import pandas as pd
 import numpy as np
-from src.config import *
+from data.config import *
 
 
 def latest_df(ratios, year=None):
-  
+
   y = year or ratios["Year"].max()
   latest = ratios[ratios["Year"] == y].set_index("Ticker")
+  latest["Type"] = latest.index.map(Company_Type)
 
   return latest
+
 
 def normalize(series):
     denom = series.max() - series.min()
     if denom == 0:
         return series * 0 + 0.5
-    return (series - series.min()) / denom
+    return ((series - series.min()) / denom * 100)
+
 
 def quality_score(ratios, year=None):
 
@@ -25,26 +28,28 @@ def quality_score(ratios, year=None):
 
     #Profitability — higher is better
     scores["Profitability"] = (
-        0.4 * normalize(latest["Net_Margin"]) +
-        0.3 * normalize(latest["EBITDA_Margin"]) +
-        0.3 * normalize(latest["FCF_Margin"])
+        0.4 * (latest["Net_Margin"]) +
+        0.3 * (latest["EBITDA_Margin"]) +
+        0.3 * (latest["FCF_Margin"])
     )
 
     #Returns — higher is better
     scores["Returns"] = (
-        0.6 * normalize(latest["ROA"]) +              #efficeincy
-        0.4 * normalize(latest["FCF_Conversion"])     #earnings quality
+        0.6 * (latest["ROA"]) +              #efficeincy
+        0.4 * (latest["FCF_Conversion"])     #earnings quality
     )
 
     #Balance Sheet — lower leverage = better
-    scores["Balance_Sheet"] = (
-        0.5 * normalize(-latest["NetDebtToEBITDA"]) +
-        0.5 * normalize(latest["InterestCoverage"])
-    )
-
-    scores = scores.round(2)
-    for col in scores.columns:
-        scores[col] = scores[col].clip(0, 1)
+    if latest["Type"] == "Financial":
+      scores["Balance_Sheet"] = (
+        0.6 * (latest["ROE"]) +
+        0.4 * (1/latest["Debt_to_Equity"])
+      )
+    else:
+      scores["Balance_Sheet"] = (
+        0.5 * (1/latest["NetDebtToEBITDA"]) +
+        0.5 * (latest["InterestCoverage"])
+      )
 
     """
     Profitability (45%) - business model strength
@@ -55,37 +60,33 @@ def quality_score(ratios, year=None):
     scores["Quality_Score"] = (
         0.45 * scores["Profitability"] +
         0.30 * scores["Returns"] +
-        0.25 * scores["Balance_Sheet"] 
+        0.25 * scores["Balance_Sheet"]
     ) * 100
 
-    scores["Quality_Score"] = scores["Quality_Score"].clip(0, 100).round(2)
+    scores["Quality_Score"] = normalize(scores["Quality_Score"]).round(2)
     scores.index = scores.index.map(Company)
 
     return scores
 
 def risk_score(ratios, year=None):
 
-    #Higher = more risky.    
+    #Higher = more risky.
     latest = latest_df(ratios, year)
     scores = pd.DataFrame(index=latest.index)
 
     #Leverage risk — higher debt = more risk
     scores["Leverage_Risk"] = (
-        0.5 * normalize(latest["NetDebtToEBITDA"].clip(lower=0)) +
-        0.5 * normalize(latest["Debt_to_Equity"].clip(lower=0))
+        0.5 * (latest["NetDebtToEBITDA"].clip(lower=0)) +
+        0.5 * (latest["Debt_to_Equity"].clip(lower=0))
     )
 
     #Coverage risk — lower coverage = more risk
-    scores["Coverage_Risk"] = normalize(
+    scores["Coverage_Risk"] = (
         1 / latest["InterestCoverage"].replace(0, np.nan)
     )
 
     #Earnings stability — higher volatility = more risk
-    scores["Earnings_Risk"] = normalize(latest["Earnings_Volatility"])
-
-    scores = scores.round(2)
-    for col in scores.columns:
-        scores[col] = scores[col].clip(0, 1)
+    scores["Earnings_Risk"] = (latest["Earnings_Volatility"])
 
     """
     Leverage (40%) - leverage is the primary risk driver
@@ -98,7 +99,7 @@ def risk_score(ratios, year=None):
         0.30 * scores["Earnings_Risk"]
     ) * 100
 
-    scores["Risk_Score"]   = scores["Risk_Score"].clip(0, 100).round(2)
+    scores["Risk_Score"]   = normalize(scores["Risk_Score"]).round(2)
     scores["Safety_Score"] = (100 - scores["Risk_Score"]).round(2)
 
     scores.index = scores.index.map(Company)
@@ -111,21 +112,17 @@ def growth_score(ratios, year=None):
     scores = pd.DataFrame(index=latest.index)
 
     # Revenue growth — top line expansion
-    scores["Revenue_Growth"]   = normalize(latest["Revenue_Growth"])
+    scores["Revenue_Growth"] = (latest["Revenue_Growth"])
 
-    # Earnings growth — bottom line expansion  
-    scores["Earnings_Growth"]  = normalize(latest["NetIncome_Growth"])
+    # Earnings growth — bottom line expansion
+    scores["Earnings_Growth"]  = (latest["NetIncome_Growth"])
 
     # FCF growth — cash generation expansion
-    scores["FCF_Growth"]       = normalize(latest["FCF_Growth"])
+    scores["FCF_Growth"] = (latest["FCF_Growth"])
 
     # Consistency — lower volatility = more consistent grower
     # Invert so lower volatility scores higher
-    scores["Consistency"]      = normalize(-latest["Earnings_Volatility"])
-
-    scores = scores.round(2)
-    for col in scores.columns:
-        scores[col] = scores[col].clip(0, 1)
+    scores["Consistency"] = (-latest["Earnings_Volatility"])
 
     """
     Revenue (35%) - Pure demand
@@ -140,7 +137,7 @@ def growth_score(ratios, year=None):
         0.15 * scores["Consistency"]
     ) * 100
 
-    scores["Growth_Score"] = scores["Growth_Score"].clip(0, 100).round(2)
+    scores["Growth_Score"] = normalize(scores["Growth_Score"])
     scores.index = scores.index.map(Company)
 
     return scores
