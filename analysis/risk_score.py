@@ -36,17 +36,15 @@ def build_risk_scorecard(data_df, ratios_df, year=None):
     #Composite Score
     risk["Risk_Score"] = risk[["Leverage", "Volatility", "Market_Risk", "FCF_Quality"]].mean(axis=1).round(1)
 
-    score = risk["Risk_Score"] 
-
     def get_risk_rating(score):
       if score < 25:
-            rating = "LOW RISK"
+        return "LOW RISK"
       elif score < 50:
-            rating = "MEDIUM RISK"
+        return "MEDIUM RISK"
       else:
-            rating = "HIGH RISK"
+        return "HIGH RISK"
 
-    risk["Risk_Rating"] = get_risk_rating(score)
+    risk["Risk_Rating"] = risk["Risk_Score"].apply(get_risk_rating)
 
     risk["Company"] = risk.index.map(Company)
 
