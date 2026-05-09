@@ -90,14 +90,15 @@ def correlation_heatmap(ratio_df):
 
 
 def flag_outliers(data_df,ratios_df, threshold=2.5):
+  
+  df = concat(data_df, ratios_df).copy()
 
   cols = [
         c for c in df.columns
         if pd.api.types.is_numeric_dtype(df[c])
         and c not in ["Year"]
     ]
-  df = data_df.copy()
-  df = concat(df,ratios_df)
+
   z = df.groupby("Year")[cols].transform(
       lambda x: (x - x.mean()) / x.std() if x.std() > 1e-6 else x * 0
   )
