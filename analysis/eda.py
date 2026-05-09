@@ -79,7 +79,7 @@ def correlation_heatmap(ratio_df):
 
     plt.figure(figsize=(10, 7))
     sns.heatmap(
-        df[cols].corr(),
+        ratio_df[cols].corr(),
         annot=True, fmt=".2f",
         cmap="RdYlGn", center=0,
         linewidths=0.5,
