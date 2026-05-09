@@ -55,7 +55,7 @@ def cashflow_analysis(ratio_df, year=None):
 
 def leverage_analysis(ratio_df, year=None):
 
-  metrics = ["NetDebtToEBITDA", "InterestCoverage", "Debt_to_Equity","Earnings_Volatility"]
+  metrics = ["NetDebtToEBITDA", "InterestCoverage", "Debt_to_Equity"]
   plot_trend(ratio_df,metrics,"Leverage & Risk")
 
   return comparison_table(ratio_df,metrics, year)
