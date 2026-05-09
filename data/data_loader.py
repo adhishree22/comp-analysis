@@ -34,7 +34,6 @@ def build_financial_dataframe(ticker):
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
     df["EBITDA"] = income.get("EBITDA")
-    df["EBITDA"] = df[["EBITDA", df["EBIT"] + df["Depreciation"]]].max(axis=1)
     df["Interest"] = income.get("Interest Expense")
     df["Tax"] = income.get("Tax Provision")
 
