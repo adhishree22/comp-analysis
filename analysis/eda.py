@@ -32,42 +32,42 @@ def comparison_table(df, metrics, year=None):
   subset = get_year(df, year)
   return (subset[["Ticker"] + metrics].set_index("Ticker").rename(index=Company).sort_index().round(4))
 
-def growth_analysis(df, year=None):
+def growth_analysis(data_df,ratio_df, year=None):
 
   metrics = ["Revenue", "NetIncome", "EBITDA","FCF"]
-  plot_trend(df, metrics, "Growth Trend")
+  plot_trend(data_df, metrics, "Growth Trend")
 
-  return comparison_table(df, [m + "_Growth" for m in metrics] , year)
+  return comparison_table(ratio_df, [m + "_Growth" for m in metrics] , year)
 
-def margin_analysis(df, year=None):
+def margin_analysis(ratio_df, year=None):
 
   metrics =  ["Net_Margin", "Operating_Margin", "EBITDA_Margin", "FCF_Margin"]
-  plot_trend(df, metrics , "Margin Trends")
+  plot_trend(ratio_df, metrics , "Margin Trends")
 
-  return comparison_table(df, metrics, year)
+  return comparison_table(ratio_df, metrics, year)
 
-def cashflow_analysis(df, year=None):
+def cashflow_analysis(ratio_df, year=None):
 
   metrics = ["FCF_Conversion", "OCF_to_NetIncome", "FCF_to_EBITDA"]
-  plot_trend(df,metrics, "Cash Flow Quality")
+  plot_trend(ratio_df,metrics, "Cash Flow Quality")
 
-  return comparison_table(df,metrics,year)
+  return comparison_table(ratio_df,metrics,year)
 
-def leverage_analysis(df, year=None):
+def leverage_analysis(ratio_df, year=None):
 
   metrics = ["NetDebtToEBITDA", "InterestCoverage", "Debt_to_Equity","Earnings_Volatility"]
-  plot_trend(df,metrics,"Leverage & Risk")
+  plot_trend(ratio_df,metrics,"Leverage & Risk")
 
-  return comparison_table(df,metrics, year)
+  return comparison_table(ratio_df,metrics, year)
 
-def valuation_analysis(df, year=None):
+def valuation_analysis(ratio_df, year=None):
 
   metrics= ["PE", "EV_EBITDA", "EV_Revenue", "FCF_Yield"]
-  plot_trend(df, metrics, "Valuation Multiples Over Time")
+  plot_trend(ratio_df, metrics, "Valuation Multiples Over Time")
 
-  return comparison_table(df,metrics, year)
+  return comparison_table(ratio_df,metrics, year)
 
-def correlation_heatmap(df):
+def correlation_heatmap(ratio_df):
 
     ratio_cols = [
         "Net_Margin", "Operating_Margin", "EBITDA_Margin", "FCF_Margin",
@@ -75,7 +75,7 @@ def correlation_heatmap(df):
         "NetDebtToEBITDA", "InterestCoverage",
         "PE", "EV_EBITDA", "EV_Revenue", "FCF_Yield",
     ]
-    cols = [c for c in ratio_cols if c in df.columns]
+    cols = [c for c in ratio_cols if c in ratio_df.columns]
 
     plt.figure(figsize=(10, 7))
     sns.heatmap(
