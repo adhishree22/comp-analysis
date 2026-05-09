@@ -33,7 +33,6 @@ def build_financial_dataframe(ticker):
     df["Revenue"] = income.get("Total Revenue")
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
-    df["Depreciation"]  = cashflow.get("Depreciation And Amortization")
     df["EBITDA"] = income.get("EBITDA")
     df["EBITDA"] = df[["EBITDA", df["EBIT"] + df["Depreciation"]]].max(axis=1)
     df["Interest"] = income.get("Interest Expense")
@@ -54,11 +53,15 @@ def build_financial_dataframe(ticker):
     if df["EBIT"].isna().any():
        df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income") + df["Interest"].abs())
 
-    if df["EBITDA"].isna().any():
-      df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
-
     if "Depreciation" in df.columns:
       df["Depreciation"] = df["Depreciation"].fillna(cashflow.get("Depreciation And Amortization"))
+
+    df["EBITDA_computed"] = df["EBIT"] + df["Depreciation"]
+    df["EBITDA"] = df[["EBITDA", "EBITDA_computed"]].max(axis=1)
+    df.drop(columns=["EBITDA_computed"], inplace=True)
+
+    if df["EBITDA"].isna().any():
+      df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
 
     if df["Capex"].isna().any():
       df["Capex"] = df["Capex"].fillna(0)
