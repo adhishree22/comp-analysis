@@ -33,7 +33,9 @@ def build_financial_dataframe(ticker):
     df["Revenue"] = income.get("Total Revenue")
     df["NetIncome"] = income.get("Net Income")
     df["EBIT"] = income.get("Operating Income")
+    df["Depreciation"]  = cashflow.get("Depreciation And Amortization")
     df["EBITDA"] = income.get("EBITDA")
+    df["EBITDA"] = df[["EBITDA", df["EBIT"] + df["Depreciation"]]].max(axis=1)
     df["Interest"] = income.get("Interest Expense")
     df["Tax"] = income.get("Tax Provision")
 
@@ -50,7 +52,7 @@ def build_financial_dataframe(ticker):
     df = df.apply(pd.to_numeric, errors="coerce")
 
     if df["EBIT"].isna().any():
-      df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income"))
+       df["EBIT"] = df["EBIT"].fillna(income.get("Pretax Income") + df["Interest"].abs())
 
     if df["EBITDA"].isna().any():
       df["EBITDA"] = df["EBITDA"].fillna(df["EBIT"] + df["Depreciation"])
