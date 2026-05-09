@@ -91,7 +91,7 @@ def correlation_heatmap(ratio_df):
 
 def flag_outliers(data_df,ratios_df, threshold=2.5):
   
-  df = pd.concat([data_df, ratios_df], axis=1).copy()
+  df = data_df.merge(ratios_df, on=["Ticker", "Year"], how="left").copy()
 
   cols = [
         c for c in df.columns
