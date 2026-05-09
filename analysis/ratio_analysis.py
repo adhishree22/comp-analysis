@@ -11,7 +11,6 @@ def add_ratios(df):
     df = df.sort_values(["Ticker", "Year"]).reset_index(drop=True)
 
     ratios = pd.DataFrame()
-    ratios = df.copy()
     ratios["Ticker"] = df["Ticker"]
     ratios["Year"]   = df["Year"]
 

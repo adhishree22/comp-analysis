@@ -88,38 +88,16 @@ def correlation_heatmap(df):
     plt.tight_layout()
     plt.show()
 
-def rank_companies(df, year=None):
 
-    subset = get_year(df, year).copy()
-
-    subset["Growth_Rank"]    = subset["Revenue_Growth"].rank(ascending=False)
-    subset["Margin_Rank"]    = subset["EBITDA_Margin"].rank(ascending=False)
-    subset["Returns_Rank"]   = subset["ROA"].rank(ascending=False)
-    subset["Valuation_Rank"] = subset["EV_EBITDA"].rank(ascending=True)
-
-    subset["Total_Score"] = subset[
-        ["Growth_Rank", "Margin_Rank", "Returns_Rank", "Valuation_Rank"]
-    ].sum(axis=1)
-
-    return (
-        subset[["Ticker", "Growth_Rank", "Margin_Rank",
-                "Returns_Rank", "Valuation_Rank", "Total_Score"]]
-        .set_index("Ticker")
-        .rename(index=Company)
-        .sort_values("Total_Score")
-        .round(1)
-    )
-
-
-def flag_outliers(df, threshold=2.5):
+def flag_outliers(data_df,ratios_df, threshold=2.5):
 
   cols = [
         c for c in df.columns
         if pd.api.types.is_numeric_dtype(df[c])
         and c not in ["Year"]
     ]
-  df = df.copy()
-
+  df = data_df.copy()
+  df = concat(df,ratios_df)
   z = df.groupby("Year")[cols].transform(
       lambda x: (x - x.mean()) / x.std() if x.std() > 1e-6 else x * 0
   )
