@@ -2,7 +2,7 @@
 
 A full-stack comp analysis project analyzing **Visa, Mastercard, American Express, and PayPal** across financial performance, profitability, cash flow, valuation, and growth dimensions.
 
-Built end-to-end with a modular Python pipeline for data engineering, ratio analysis, EDA, comps, and risk scoring — with Tableau for interactive buy-side style visualization.
+Built end-to-end with a modular Python pipeline for data ingestion, ratio analysis, EDA, comps, and risk scoring — with Tableau for interactive buy-side style visualization.
 
 ---
 
@@ -119,7 +119,7 @@ Exports two clean CSVs — financials and ratios — formatted for direct use as
 
 | # | Dashboard | Key Charts |
 |---|-----------|------------|
-| 1 | **Executive Overview** | KPI cards (Revenue, NI, FCF, Market Cap), Revenue/EBITDA/FCF trends |
+| 1 | **Executive Overview** | KPI cards (Revenue, NI, Market Cap), Revenue/EBITDA/FCF trends |
 | 2 | **Margin Analysis** | Margin trends over time, margin comparison across all 4 margin types |
 | 3 | **Profitability & Returns** | Revenue-to-NI bridge, ROE trend, ROA trend, ROA vs ROE comparison |
 | 4 | **Cash Flow & Capital Efficiency** | FCF conversion, FCF yield, Net Debt/EBITDA, interest coverage, debt/equity trend |
