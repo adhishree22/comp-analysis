@@ -189,6 +189,3 @@ jupyter notebook Comps_Analysis.ipynb
 ```
 
 ---
-
-## Author
-Adhishree Gajare
