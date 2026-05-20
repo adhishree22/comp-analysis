@@ -169,7 +169,6 @@ Exports two clean CSVs — financials and ratios — formatted for direct use as
 | Python (Pandas, NumPy) | Data engineering, ratio calculation, EDA, comps, risk scoring |
 | yfinance | Financial statement data retrieval |
 | Modular Python scripts | Clean separation across pipeline, ratios, EDA, comps, risk, export |
-| Jupyter Notebook | Orchestration and documentation |
 | Tableau Public | Interactive 6-dashboard story with global filters |
 
 ---
