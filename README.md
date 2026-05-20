@@ -18,12 +18,12 @@ https://public.tableau.com/views/CompAnalysis_17780395604670/PaymentsIndustryCom
 comp-analysis/
 │
 ├── data/
-│   ├── beta_loader.py            # yfinance fetching beta data
+│   ├── beta_loader.py           # yfinance fetching beta data
 │   ├── config.py                # Tickers, scale, and constants
 │   ├── data_loader.py           # yfinance fetching and financial dataframe construction
 │   ├── export_tableau.py        # Exports clean CSVs for Tableau
 │   ├── pipeline.py              # Orchestrates full dataset build
-│   └──  price_loader.py         # yfinance fetching and price data construction
+│   └── price_loader.py         # yfinance fetching and price data construction
 │
 ├── analysis/
 │   ├── ratio_analysis.py        # Computes 27+ financial ratios
@@ -184,8 +184,8 @@ cd comp-analysis
 # Install dependencies
 pip install pandas numpy yfinance
 
-# Open the notebook
-jupyter notebook Comps_Analysis.ipynb
+# Run the model
+notebook Comps_Analysis.ipynb
 ```
 
 ---
