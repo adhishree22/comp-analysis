@@ -176,7 +176,7 @@ Exports two clean CSVs — financials and ratios — formatted for direct use as
 ```bash
 # Clone the repo
 git clone https://github.com/Adhishree22/Comp_Analysis.git
-cd comp-analysis
+cd Comp_Analysis
 
 # Install dependencies
 pip install pandas numpy yfinance
