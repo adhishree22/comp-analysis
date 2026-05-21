@@ -8,7 +8,7 @@ Built end-to-end with a modular Python pipeline for data ingestion, ratio analys
 
 ## Live Dashboard
 
-https://public.tableau.com/views/CompAnalysis_17780395604670/PaymentsIndustryCompAnalysis?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link 
+https://public.tableau.com/views/CompAnalysis_17780395604670/PaymentsIndustryCompAnalysis?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
 
 ---
 
