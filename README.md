@@ -15,8 +15,6 @@ https://public.tableau.com/views/CompAnalysis_17780395604670/PaymentsIndustryCom
 ## Project Structure
 
 ```
-comp-analysis/
-│
 ├── data/
 │   ├── beta_loader.py           # yfinance fetching beta data
 │   ├── config.py                # Tickers, scale, and constants
@@ -177,7 +175,7 @@ Exports two clean CSVs — financials and ratios — formatted for direct use as
 
 ```bash
 # Clone the repo
-git clone https://github.com/Adhishree22/comp-analysis.git
+git clone https://github.com/Adhishree22/Comp_Analysis.git
 cd comp-analysis
 
 # Install dependencies
